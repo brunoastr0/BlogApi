@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostCollection;
 use App\Models\Post;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -23,9 +24,9 @@ class PostController extends Controller
                 return PostCollection::collection($posts);
             }
             return response(status: 404);
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
             return response()->json([
-                "error" => $th->getMessage()
+                "error" => $e->getMessage()
             ]);
         }
     }
@@ -51,10 +52,10 @@ class PostController extends Controller
                 $post = new Post();
 
                 $result = Post::create([
-                    $post->title = $request->title,
-                    $post->post = $request->post,
-                    $post->slug = $request->slug,
-                    $post->author_id = $request->author_id,
+                    "title" => $request->title,
+                    "post" => $request->post,
+                    "slug" => $request->slug,
+                    "author_id" => $request->author_id,
                 ]);
                 \Log::error(json_encode($result));
 
@@ -66,9 +67,9 @@ class PostController extends Controller
             }
 
             return;
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
             return response()->json([
-                'error' => $th->getMessage()
+                'error' => $e->getMessage()
             ]);
         }
     }
@@ -83,19 +84,15 @@ class PostController extends Controller
                 return $post;
                 return PostCollection::collection($post);
             }
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
 
-            // \Log::error(json_encode($th));
+            // \Log::error(json_encode($e));
             return response()->json([
-                'error' => $th->getMessage()
+                'error' => $e->getMessage()
             ]);
         }
     }
 
-    public function edit(Post $Post)
-    {
-        //
-    }
 
     public function update(Request $request, int $id)
     {
@@ -126,9 +123,9 @@ class PostController extends Controller
             }
 
             return;
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
             return response()->json([
-                'error' => $th->getMessage()
+                'error' => $e->getMessage()
             ]);
         }
     }
@@ -144,7 +141,7 @@ class PostController extends Controller
                     "post" => $post
                 ]);
             }
-        } catch (\Throwable $e) {
+        } catch (Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
             ]);
