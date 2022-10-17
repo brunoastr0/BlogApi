@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostCollection;
 use App\Models\Post;
-use Exception;
+use \Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -24,7 +24,7 @@ class PostController extends Controller
                 return PostCollection::collection($posts);
             }
             return response(status: 404);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
             ]);
@@ -67,7 +67,7 @@ class PostController extends Controller
             }
 
             return;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
             ]);
@@ -84,7 +84,7 @@ class PostController extends Controller
                 return $post;
                 return PostCollection::collection($post);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             // \Log::error(json_encode($e));
             return response()->json([
@@ -123,7 +123,7 @@ class PostController extends Controller
             }
 
             return;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
             ]);
@@ -141,7 +141,7 @@ class PostController extends Controller
                     "post" => $post
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
             ]);
