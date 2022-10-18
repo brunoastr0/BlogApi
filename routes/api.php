@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthorController;
+
 
 
 /*
@@ -20,8 +22,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/post', [PostController::class, 'index']);
-Route::post('/post', [PostController::class, 'store']);
-Route::get('/post/{id}', [PostController::class, 'show']);
-Route::delete('/post/{id}', [PostController::class, 'destroy']);
-Route::put('/post/{id}', [PostController::class, 'update']);
+/**Article routes */
+Route::post('/post', [ArticleController::class, 'index'])->middleware("auth:api");
+Route::post('/post', [ArticleController::class, 'store']);
+Route::get('/post/{id}', [ArticleController::class, 'show']);
+Route::delete('/post/{id}', [ArticleController::class, 'destroy']);
+Route::put('/post/{id}', [ArticleController::class, 'update']);
+
+/**Author routes */
+Route::post('/login', [AuthorController::class, 'login'])->name('login');
+Route::post('/logout', [AuthorController::class, 'logout'])->middleware("auth:api");
+Route::post('/register', [AuthorController::class, 'register']);
+Route::post('/author/detail', [AuthorController::class, 'getAuthor'])->middleware("auth:api");

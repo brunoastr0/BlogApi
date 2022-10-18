@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 // use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class PostCollection extends JsonResource
+class ArticleResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
