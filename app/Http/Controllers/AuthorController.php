@@ -2,35 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateAuthorRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class AuthorController extends Controller
 {
-    public function register(Request $request)
+    public function register(CreateAuthorRequest $request)
     {
 
-        $validators = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required'
-        ]);
-        if ($validators->fails()) {
-            return response(['errors' => $validators->getMessageBag()->toArray()]);
-        } else {
-            $author = new User();
-            $author->name = $request->name;
-            $author->email = $request->email;
-            $author->password = bcrypt($request->password);
-            $author->api_key = Str::random(80);
-            $author->save();
-            return response(['success' => 'Registration done successfully !', 'author' => $author]);
+        try {
+
+            $authorExists = User::where('email', $request->email)->first();
+
+            //dd($authorExists->count());
+            if ($authorExists) {
+                return response(['error' => 'User already exists!'], 400);
+            }
+            $author = User::create($request->validated());
+
+            if ($author) {
+                return response(['success' => 'Registration done successfully !', 'author' => $author]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ]);
         }
     }
+
 
     // login user
     public function login(Request $request)
@@ -44,7 +49,7 @@ class AuthorController extends Controller
         } else {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $author = $request->user();
-                $author->api_key = Str::random(80);
+                $author->api_token = Str::random(80);
                 $author->save();
                 return response(['loggedin' => true, 'success' => 'Login was successfully !', 'author' => Auth::user()]);
             } else {
@@ -65,9 +70,17 @@ class AuthorController extends Controller
     // log the author out
     public function logout(Request $request)
     {
-        $author = $request->user();
-        $author->api_key = NULL;
-        $author->save();
-        return response(['message' => 'Logged out!']);
+
+        try {
+            $author = $request->user();
+
+            $author->api_token = NULL;
+            $author->save();
+            return response(['message' => 'Logged out!']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }

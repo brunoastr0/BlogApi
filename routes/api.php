@@ -30,5 +30,7 @@ Route::delete('/post/{id}', [ArticleController::class, 'destroy']);
 Route::put('/post/{id}', [ArticleController::class, 'update']);
 
 /**Author routes */
-Route::post('/login', [AuthorController::class, 'login']);
+Route::post('/login', [AuthorController::class, 'login'])->name('login');
+Route::post('/logout', [AuthorController::class, 'logout'])->middleware("auth:api");
 Route::post('/register', [AuthorController::class, 'register']);
+Route::get('/getAuthor', [AuthorController::class, 'getAuthor'])->middleware("auth:api");
