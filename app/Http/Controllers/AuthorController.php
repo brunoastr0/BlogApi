@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
@@ -18,15 +20,15 @@ class AuthorController extends Controller
             'password' => 'required'
         ]);
         if ($validators->fails()) {
-            return Response::json(['errors' => $validators->getMessageBag()->toArray()]);
+            return response(['errors' => $validators->getMessageBag()->toArray()]);
         } else {
             $author = new User();
             $author->name = $request->name;
             $author->email = $request->email;
             $author->password = bcrypt($request->password);
-            $author->api_token = Str::random(80);
+            $author->api_key = Str::random(80);
             $author->save();
-            return Response::json(['success' => 'Registration done successfully !', 'author' => $author]);
+            return response(['success' => 'Registration done successfully !', 'author' => $author]);
         }
     }
 
@@ -38,15 +40,15 @@ class AuthorController extends Controller
             'password' => 'required'
         ]);
         if ($validators->fails()) {
-            return Response::json(['errors' => $validators->getMessageBag()->toArray()]);
+            return response(['errors' => $validators->getMessageBag()->toArray()]);
         } else {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $author = $request->user();
-                $author->api_token = Str::random(80);
+                $author->api_key = Str::random(80);
                 $author->save();
-                return Response::json(['loggedin' => true, 'success' => 'Login was successfully !', 'author' => Auth::user()]);
+                return response(['loggedin' => true, 'success' => 'Login was successfully !', 'author' => Auth::user()]);
             } else {
-                return Response::json(['loggedin' => false, 'errors' => 'Login failed ! Wrong credentials.']);
+                return response(['loggedin' => false, 'errors' => 'Login failed ! Wrong credentials.']);
             }
         }
     }
@@ -57,15 +59,15 @@ class AuthorController extends Controller
         $author = [];
         $author['name'] = Auth::user()->name;
         $author['email'] = Auth::user()->email;
-        return Response::json($author);
+        return response($author);
     }
 
     // log the author out
     public function logout(Request $request)
     {
         $author = $request->user();
-        $author->api_token = NULL;
+        $author->api_key = NULL;
         $author->save();
-        return Response::json(['message' => 'Logged out!']);
+        return response(['message' => 'Logged out!']);
     }
 }

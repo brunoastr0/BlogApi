@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthorController;
+
 
 
 /*
@@ -20,8 +22,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/post', [PostController::class, 'index']);
-Route::post('/post', [PostController::class, 'store']);
-Route::get('/post/{id}', [PostController::class, 'show']);
-Route::delete('/post/{id}', [PostController::class, 'destroy']);
-Route::put('/post/{id}', [PostController::class, 'update']);
+/**Article routes */
+Route::get('/post', [ArticleController::class, 'index']);
+Route::post('/post', [ArticleController::class, 'store']);
+Route::get('/post/{id}', [ArticleController::class, 'show']);
+Route::delete('/post/{id}', [ArticleController::class, 'destroy']);
+Route::put('/post/{id}', [ArticleController::class, 'update']);
+
+/**Author routes */
+Route::post('/login', [AuthorController::class, 'login']);
+Route::post('/register', [AuthorController::class, 'register']);
