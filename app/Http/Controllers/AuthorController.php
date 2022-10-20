@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Auth;
+// use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
@@ -47,7 +48,7 @@ class AuthorController extends Controller
         if ($validators->fails()) {
             return response(['errors' => $validators->getMessageBag()->toArray()]);
         } else {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (Auth::guard("api")->attempt(['email' => $request->email, 'password' => $request->password])) {
                 $author = $request->user();
                 $author->api_token = Str::random(80);
                 $author->save();
@@ -64,6 +65,17 @@ class AuthorController extends Controller
         $author = [];
         $author['name'] = Auth::user()->name;
         $author['email'] = Auth::user()->email;
+
+        dd(Auth::user());
+
+        return response($author);
+    }
+
+
+    public function getAuthorPost(User $User)
+    {
+        $author = $User->article()->get();
+
         return response($author);
     }
 
@@ -76,6 +88,9 @@ class AuthorController extends Controller
 
             $author->api_token = NULL;
             $author->save();
+
+
+
             return response(['message' => 'Logged out!']);
         } catch (\Exception $e) {
             return response()->json([

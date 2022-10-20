@@ -27,7 +27,7 @@ class CreateArticleRequest extends FormRequest
             'title' => 'required | string',
             'post' => 'required | string',
             'slug' => 'required | string',
-            'author_id' => 'required | int'
+            'author_id' => 'int|exists:users,id'
         ];
     }
 }

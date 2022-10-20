@@ -10,6 +10,7 @@ use \Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Auth;
 
 class ArticleController extends Controller
 {
@@ -40,14 +41,24 @@ class ArticleController extends Controller
 
         try {
 
+            // dd(auth()->id());
+
+
+            // $result = Article::create($request->validate([
+            //     'title' => 'required | string',
+            //     'post' => 'required | string',
+            //     'slug' => 'required | string',
+            //     'author_id' => 'int|exists:users,id'
+            // ]));
             $result = Article::create($request->validated());
+
+
+
+
 
             if ($result) {
                 return response("Article created succesfully", status: 201);
             }
-
-
-            return;
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
@@ -63,7 +74,7 @@ class ArticleController extends Controller
             $article = Article::findOrFail($id);
             if ($article) {
                 return $article;
-                return ArtcileResource::collection($article);
+                return ArticleResource::collection($article);
             }
         } catch (\Exception $e) {
 
