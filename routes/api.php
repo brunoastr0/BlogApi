@@ -24,16 +24,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /**Article routes */
 Route::get('/post', [ArticleController::class, 'index'])->middleware("auth:api");
-Route::post('/post', [ArticleController::class, 'store'])->middleware("auth:api");
+Route::post('/post', [ArticleController::class, 'store'])->middleware("auth:sanctum");
 Route::get('/post/{id}', [ArticleController::class, 'show']);
 Route::delete('/post/{id}', [ArticleController::class, 'destroy']);
 Route::put('/post/{id}', [ArticleController::class, 'update']);
 
 /**Author routes */
-// Route::group(middleware("auth:api"),)
+Route::group(["middleware" => "auth:sanctum"], function () {
+    Route::post('/logout', [AuthorController::class, 'logout']);
+    Route::get('/author/detail', [AuthorController::class, 'getAuthor']);
+    Route::get('/author/articles', [AuthorController::class, 'getAuthorPost']);
+});
+
 
 Route::post('/login', [AuthorController::class, 'login'])->name('login');
-Route::post('/logout', [AuthorController::class, 'logout'])->middleware("auth:api");
+
 Route::post('/register', [AuthorController::class, 'register']);
-Route::get('/author/detail', [AuthorController::class, 'getAuthor'])->middleware("auth:api");
-Route::get('/author/articles', [AuthorController::class, 'getAuthorPost'])->middleware("auth:api");
