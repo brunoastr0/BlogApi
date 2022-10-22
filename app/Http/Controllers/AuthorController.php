@@ -90,7 +90,7 @@ class AuthorController extends Controller
 
     public function getAuthorPost()
     {
-        $author = auth()->user()->article()->get();
+        $author = auth()->user()->post()->get();
 
         return response($author);
     }

@@ -2,30 +2,26 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuthor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-class Article extends Model
+
+class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, HasAuthor;
     // use Sluggable;
 
     protected $table = 'posts';
     protected $fillable = [
         'title',
-        'post',
+        'content',
         'slug',
         'author_id'
     ];
 
-    // public function sluggable(): array
-    // {
-    //     return [
-    //         'slug' => [
-    //             'source' => 'title'
-    //         ]
-    //     ];
-    // }
+
 
     protected $dates = [
         'posted_at'
@@ -37,8 +33,9 @@ class Article extends Model
 
     protected static function booted()
     {
-        static::creating(function ($article) {
-            $article->author_id = auth()->id();
+
+        static::saving(function ($post) {
+            $post->slug = Str::slug($post->title, '-');
         });
     }
 

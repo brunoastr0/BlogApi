@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateArticleRequest;
-use App\Http\Resources\ArticleResource;
-use App\Models\Article;
+use App\Http\Requests\CreatePostRequest;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 
 use \Exception;
 use Illuminate\Http\Request;
@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 
-class ArticleController extends Controller
+class PostController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -22,9 +23,9 @@ class ArticleController extends Controller
     public function index()
     {
         try {
-            $articles = Article::all();
-            if ($articles) {
-                return ArticleResource::collection($articles);
+            $posts = Post::all();
+            if ($posts) {
+                return PostResource::collection($posts);
             }
             return response(status: 404);
         } catch (\Exception $e) {
@@ -36,7 +37,7 @@ class ArticleController extends Controller
 
 
 
-    public function store(CreateArticleRequest $request)
+    public function store(CreatePostRequest $request)
     {
 
         try {
@@ -44,20 +45,23 @@ class ArticleController extends Controller
             // dd(auth()->id());
 
 
-            // $result = Article::create($request->validate([
+            // $result = post::create($request->validate([
             //     'title' => 'required | string',
             //     'post' => 'required | string',
             //     'slug' => 'required | string',
             //     'author_id' => 'int|exists:users,id'
             // ]));
-            $result = Article::create($request->validated());
+            $result = Post::create($request->validated());
 
 
 
 
 
             if ($result) {
-                return response("Article created succesfully", status: 201);
+                return response([
+                    'message' => "Post created succesfully",
+                    "post" => $result
+                ], status: 201);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -71,10 +75,10 @@ class ArticleController extends Controller
     {
 
         try {
-            $article = Article::findOrFail($id);
-            if ($article) {
-                return $article;
-                return ArticleResource::collection($article);
+            $post = Post::findOrFail($id);
+            if ($post) {
+                return $post;
+                return PostResource::collection($post);
             }
         } catch (\Exception $e) {
 
@@ -86,16 +90,16 @@ class ArticleController extends Controller
     }
 
 
-    public function update(CreateArticleRequest $request, int $id)
+    public function update(CreatePostRequest $request, int $id)
     {
         try {
-            $article = Article::findOrFail($id);
+            $post = Post::findOrFail($id);
 
-            $result = $article::create($request->validated());
+            $result = $post->update($request->validated());
             if ($result) {
                 return response()->json([
                     "status" => 200,
-                    "message" => "Article updated succesfully"
+                    "message" => "Post updated succesfully"
                 ]);
             }
 
@@ -111,11 +115,12 @@ class ArticleController extends Controller
     public function destroy(int $id)
     {
         try {
-            $article = Article::findOrFail($id);
-            if ($article) {
+            $post = Post::findOrFail($id);
+            $result = $post->delete();
+            if ($result) {
                 return response()->json([
-                    "Message" => "Article was deleted",
-                    "Article" => $article
+                    "Message" => "Post was deleted",
+                    "post" => $post
                 ]);
             }
         } catch (\Exception $e) {
