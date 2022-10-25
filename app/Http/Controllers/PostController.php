@@ -24,10 +24,7 @@ class PostController extends Controller
     {
         try {
             $posts = Post::all();
-            if ($posts) {
-                return PostResource::collection($posts);
-            }
-            return response(status: 404);
+            return response(PostResource::collection($posts));
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
@@ -42,27 +39,14 @@ class PostController extends Controller
 
         try {
 
-            // dd(auth()->id());
-
-
-            // $result = post::create($request->validate([
-            //     'title' => 'required | string',
-            //     'post' => 'required | string',
-            //     'slug' => 'required | string',
-            //     'author_id' => 'int|exists:users,id'
-            // ]));
+            // dd($request->all());
             $result = Post::create($request->validated());
 
 
-
-
-
-            if ($result) {
-                return response([
-                    'message' => "Post created succesfully",
-                    "post" => $result
-                ], status: 201);
-            }
+            return response([
+                'message' => "Post created succesfully",
+                "post" => new PostResource($result)
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
@@ -71,15 +55,13 @@ class PostController extends Controller
     }
 
 
-    public function show(int $id)
+    public function show(string $slug)
     {
 
         try {
-            $post = Post::findOrFail($id);
-            if ($post) {
-                return $post;
-                return PostResource::collection($post);
-            }
+            $post = Post::where("slug", $slug)->first();
+
+            return response(new PostResource($post));
         } catch (\Exception $e) {
 
             // \Log::error(json_encode($e));

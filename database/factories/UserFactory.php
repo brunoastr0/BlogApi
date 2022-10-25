@@ -38,6 +38,11 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function tokenize_author()
+    {
+        return $this->createToken("blogToken")->plainTextToken;
+    }
+
     public function john_doe(): Factory
     {
         return $this->state(function () {

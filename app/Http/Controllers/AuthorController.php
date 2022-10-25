@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthorController extends Controller
 {
-    public function register(Request $request)
+    public function register(CreateAuthorRequest $request)
     {
 
         try {
@@ -27,11 +27,7 @@ class AuthorController extends Controller
             // if ($authorExists) {
             //     return response(['error' => 'User already exists!'], 400);
             // }
-            $author = User::create($request->validate([
-                'name' => 'required',
-                'email' => 'required|string|email|unique:users',
-                'password' => 'required|confirmed'
-            ]));
+            $author = User::create($request->validated());
             $token = $author->createToken("blogToken")->plainTextToken;
 
             if ($author) {
@@ -100,10 +96,8 @@ class AuthorController extends Controller
     {
 
         try {
-            $author = $request->user();
 
-            $author->api_token = NULL;
-            $author->save();
+            auth()->user()->tokens()->delete();
 
 
 

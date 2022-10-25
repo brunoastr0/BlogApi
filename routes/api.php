@@ -16,19 +16,15 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 
-
-
+// Route::resources('/post', PostController::class);
 /**Private Routes */
 Route::group(["middleware" => "auth:sanctum"], function () {
     /**Artcile Routes */
     Route::get('/post', [PostController::class, 'index']);
     Route::post('/post', [PostController::class, 'store']);
-    Route::get('/post/{id}', [PostController::class, 'show']);
+    Route::get('/post/{slug}', [PostController::class, 'show']);
     Route::delete('/post/delete/{id}', [PostController::class, 'destroy']);
     Route::put('/post/edit/{id}', [PostController::class, 'update']);
 
