@@ -24,6 +24,10 @@ class PostController extends Controller
     {
         try {
             $posts = Post::all();
+            // dd();
+            if ($posts->isEmpty()) {
+                return response(["message" => "No post available"], 404);
+            }
             return response(PostResource::collection($posts));
         } catch (\Exception $e) {
             return response()->json([
@@ -59,7 +63,8 @@ class PostController extends Controller
     {
 
         try {
-            $post = Post::where("slug", $slug)->first();
+            $post = Post::where("slug", $slug)->get();
+
 
             return response(new PostResource($post));
         } catch (\Exception $e) {
@@ -75,15 +80,14 @@ class PostController extends Controller
     public function update(CreatePostRequest $request, int $id)
     {
         try {
-            $post = Post::findOrFail($id);
+            $post = Post::findOrFail($id)->update($request->validated());
 
-            $result = $post->update($request->validated());
-            if ($result) {
-                return response()->json([
-                    "status" => 200,
-                    "message" => "Post updated succesfully"
-                ]);
-            }
+
+            return response()->json([
+                "status" => 200,
+                "message" => "Post updated succesfully"
+            ]);
+
 
             return;
         } catch (\Exception $e) {

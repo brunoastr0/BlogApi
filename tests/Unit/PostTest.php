@@ -15,11 +15,7 @@ class PostTest extends TestCase
      *
      * @return void
      */
-    public function test_post_has_slug()
-    {
-        $post = Post::factory()->create(['title' => 'The Empire Strikes Back']);
-        $this->assertEquals($post->slug, 'the-empire-strikes-back');
-    }
+
 
     // public function test_post_has_author()
     // {

@@ -42,4 +42,10 @@ class PostTest extends TestCase
             ])
             ->assertStatus(401);
     }
+
+    public function test_post_has_slug()
+    {
+        $post = Post::factory()->create(['title' => 'The Empire Strikes Back']);
+        $this->assertEquals($post->slug, 'the-empire-strikes-back');
+    }
 }
