@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
+use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -73,23 +74,21 @@ class AuthorController extends Controller
     // get authenticated author
     public function getAuthor()
     {
+        $auth_user = auth()->user();
 
         $author = [];
-        $author['name'] = auth()->user()->name;
-        $author['email'] = auth()->user()->email;
+        $author['name'] = $auth_user->name;
+        $author['email'] = $auth_user->email;
+        $author['Posts'] = new PostResource($auth_user->post()->get());
 
 
 
-        return response($author);
-    }
-
-
-    public function getAuthorPost()
-    {
-        $author = auth()->user()->post()->get();
 
         return response($author);
     }
+
+
+
 
     // log the author out
     public function logout(Request $request)
