@@ -17,10 +17,18 @@ use App\Http\Controllers\PostController;
 */
 
 
-
 // Route::resources('/post', PostController::class);
 /**Private Routes */
 Route::group(["middleware" => "auth:sanctum"], function () {
+    /**Admin */
+    Route::group([
+        'prefix' => "admin",
+        'middleware' => 'is_admin',
+        'as' => 'admin'
+    ], function () {
+        Route::get('/post', [PostController::class, 'index']);
+    });
+
     /**Artcile Routes */
     Route::get('/post', [PostController::class, 'index']);
     Route::post('/post', [PostController::class, 'store']);
@@ -30,8 +38,7 @@ Route::group(["middleware" => "auth:sanctum"], function () {
 
     /**Author routes */
     Route::post('/logout', [AuthorController::class, 'logout']);
-    Route::get('/author/detail', [AuthorController::class, 'getAuthor']);
-    Route::get('/author/posts', [AuthorController::class, 'getAuthorPost']);
+    Route::get('/author', [AuthorController::class, 'index']);
 });
 
 /**Public Routes */

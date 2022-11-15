@@ -28,7 +28,7 @@ class Post extends Model
     ];
 
     protected $createdBy = [
-        "author"
+        "author_id"
     ];
 
     protected static function booted()

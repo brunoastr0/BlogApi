@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
 use App\Http\Resources\PostResource;
+use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -22,12 +23,7 @@ class AuthorController extends Controller
 
         try {
 
-            // $authorExists = User::where('email', $request->email)->first();
 
-            // //dd($authorExists->count());
-            // if ($authorExists) {
-            //     return response(['error' => 'User already exists!'], 400);
-            // }
             $author = User::create($request->validated());
             $token = $author->createToken("blogToken")->plainTextToken;
 
@@ -72,14 +68,14 @@ class AuthorController extends Controller
     }
 
     // get authenticated author
-    public function getAuthor()
+    public function index()
     {
         $auth_user = auth()->user();
 
         $author = [];
         $author['name'] = $auth_user->name;
         $author['email'] = $auth_user->email;
-        $author['Posts'] = new PostResource($auth_user->post()->get());
+        $author['Posts'] = PostResource::collection($auth_user->post()->get());
 
 
 

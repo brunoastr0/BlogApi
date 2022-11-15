@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -77,16 +78,23 @@ class PostController extends Controller
     }
 
 
-    public function update(CreatePostRequest $request, int $id)
+    public function update(Request $request, int $id)
     {
         try {
-            $post = Post::findOrFail($id)->update($request->validated());
+            $post = Post::findOrFail($id);
+            $response = Gate::inspect('author-post-actions', $post);
+            if ($response->allowed()) {
+                $post->update($request->all());
 
 
-            return response()->json([
-                "status" => 200,
-                "message" => "Post updated succesfully"
-            ]);
+                return response()->json([
+                    "status" => 200,
+                    "message" => "Post updated succesfully"
+                ]);
+            } else {
+                return response(["message" => $response->message()], 403);
+            }
+
 
 
             return;
@@ -102,12 +110,17 @@ class PostController extends Controller
     {
         try {
             $post = Post::findOrFail($id);
-            $result = $post->delete();
-            if ($result) {
+            $response = Gate::inspect('author-post-actions', $post);
+            if ($response->allowed()) {
+                $result = $post->delete();
+
                 return response()->json([
-                    "Message" => "Post was deleted",
+                    "status" => 200,
+                    "message" => "Post deleted succesfully",
                     "post" => $post
                 ]);
+            } else {
+                return response(["message" => $response->message()], 403);
             }
         } catch (\Exception $e) {
             return response()->json([

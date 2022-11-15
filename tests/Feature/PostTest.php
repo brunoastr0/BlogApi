@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\PostResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Post;
@@ -33,7 +34,6 @@ class PostTest extends TestCase
 
     public function test_user_not_auth_cannot_create_post()
     {
-        $user = User::factory()->create();
 
         $this->withHeaders(['Accept' => 'application/json'])
             ->post("http://127.0.0.1:8000/api/post", [
@@ -47,5 +47,21 @@ class PostTest extends TestCase
     {
         $post = Post::factory()->create(['title' => 'The Empire Strikes Back']);
         $this->assertEquals($post->slug, 'the-empire-strikes-back');
+    }
+
+    public function test_not_author_cannot_edit_post()
+    {
+        $user = User::factory()->john_doe()->create();
+        $user2 = User::factory()->create();
+        $post = Post::factory()->create(["author_id" => $user2->id]);
+
+
+        $this->withHeaders(['Accept' => 'application/json'])
+            ->actingAs($user, "sanctum")
+            ->json("put", "http://127.0.0.1:8000/api/post/edit/{$post->id}", ["title" => "Hello from figma 2"])
+            ->assertForbidden()
+            ->assertJson([
+                'message' => 'This action is unauthorized.'
+            ]);
     }
 }
