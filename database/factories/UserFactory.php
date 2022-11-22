@@ -37,4 +37,19 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    public function tokenize_author()
+    {
+        return $this->createToken("blogToken")->plainTextToken;
+    }
+
+    public function john_doe(): Factory
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'John Doe',
+                'email' => 'johndoe@gmail.com'
+            ];
+        });
+    }
 }

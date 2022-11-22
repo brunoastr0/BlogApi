@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 // use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ArticleResource extends JsonResource
+class PostResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -20,7 +20,7 @@ class ArticleResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'post' => $this->post,
+            'content' => $this->content,
             'slug' => $this->slug,
             'author_id' => $this->author_id,
             'created_at' => $this->created_at,

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,6 +12,9 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Auth;
+use Illuminate\Support\Facades\Hash;
+
+// use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
@@ -18,16 +23,16 @@ class AuthorController extends Controller
 
         try {
 
-            $authorExists = User::where('email', $request->email)->first();
 
-            //dd($authorExists->count());
-            if ($authorExists) {
-                return response(['error' => 'User already exists!'], 400);
-            }
             $author = User::create($request->validated());
+            $token = $author->createToken("blogToken")->plainTextToken;
 
             if ($author) {
-                return response(['success' => 'Registration done successfully !', 'author' => $author]);
+                return response([
+                    'success' => 'Registration done successfully !',
+                    'author' => $author,
+                    'token' => $token
+                ]);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -40,42 +45,57 @@ class AuthorController extends Controller
     // login user
     public function login(Request $request)
     {
-        $validators = Validator::make($request->all(), [
-            'email' => 'required|email',
+
+        $fields = $request->validate([
+            'email' => 'required|string',
             'password' => 'required'
         ]);
-        if ($validators->fails()) {
-            return response(['errors' => $validators->getMessageBag()->toArray()]);
-        } else {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                $author = $request->user();
-                $author->api_token = Str::random(80);
-                $author->save();
-                return response(['loggedin' => true, 'success' => 'Login was successfully !', 'author' => Auth::user()]);
-            } else {
-                return response(['loggedin' => false, 'errors' => 'Login failed ! Wrong credentials.']);
-            }
+
+
+        $authorExists = User::where('email', $fields['email'])->first();
+        if (!$authorExists || !Hash::check($fields['password'], $authorExists->password)) {
+            return response(['loggedin' => false, 'errors' => 'Login failed ! Wrong credentials.'], 401);
         }
+
+        $token = $authorExists->createToken("blogToken")->plainTextToken;
+
+
+        return response([
+            'success' => 'LogIn done successfully !',
+            'author' => $authorExists,
+            'token' => $token
+        ]);
     }
 
     // get authenticated author
-    public function getAuthor()
+    public function index()
     {
+        $auth_user = auth()->user();
+
         $author = [];
-        $author['name'] = Auth::user()->name;
-        $author['email'] = Auth::user()->email;
+        $author['name'] = $auth_user->name;
+        $author['email'] = $auth_user->email;
+        $author['Posts'] = PostResource::collection($auth_user->post()->get());
+
+
+
+
         return response($author);
     }
+
+
+
 
     // log the author out
     public function logout(Request $request)
     {
 
         try {
-            $author = $request->user();
 
-            $author->api_token = NULL;
-            $author->save();
+            auth()->user()->tokens()->delete();
+
+
+
             return response(['message' => 'Logged out!']);
         } catch (\Exception $e) {
             return response()->json([

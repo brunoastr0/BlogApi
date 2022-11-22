@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'api_token',
         'password',
+        'is_admin'
     ];
 
     /**
@@ -43,8 +44,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
+    }
+
+    public function post()
+    {
+        return $this->hasMany(Post::class, 'author_id');
     }
 }

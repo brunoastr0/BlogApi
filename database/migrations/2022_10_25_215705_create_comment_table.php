@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id()->unique();
-            $table->string('title');
-            $table->text('content');
-            $table->string('slug')->unique();
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('author_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('post_id')->nullable()->constrained('posts')->onDelete('set null');
+            $table->string("content");
+            $table->datetime("posted_at");
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('comments');
     }
 };
