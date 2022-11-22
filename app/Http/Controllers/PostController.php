@@ -64,10 +64,13 @@ class PostController extends Controller
     {
 
         try {
+
             $post = Post::where("slug", $slug)->get();
 
 
-            return response(new PostResource($post));
+
+
+            return response(PostResource::collection($post));
         } catch (\Exception $e) {
 
             // \Log::error(json_encode($e));

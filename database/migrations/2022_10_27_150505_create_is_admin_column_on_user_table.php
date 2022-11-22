@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropColumns('is_admin', "users");
+        Schema::dropColumns('users', "is_admin");
     }
 };

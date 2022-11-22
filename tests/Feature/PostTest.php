@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class PostTest extends TestCase
 {
@@ -58,7 +59,11 @@ class PostTest extends TestCase
 
         $this->withHeaders(['Accept' => 'application/json'])
             ->actingAs($user, "sanctum")
-            ->json("put", "http://127.0.0.1:8000/api/post/edit/{$post->id}", ["title" => "Hello from figma 2"])
+            ->json(
+                "put",
+                "http://127.0.0.1:8000/api/post/edit/{$post->id}",
+                ["title" => "Hello from figma 2"]
+            )
             ->assertForbidden()
             ->assertJson([
                 'message' => 'This action is unauthorized.'
