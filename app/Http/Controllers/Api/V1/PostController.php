@@ -20,17 +20,13 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
         try {
             $posts = Post::all();
-
-            if ($posts->isEmpty()) {
-                return response(["message" => "No post available"], 404);
-            }
-            return response(PostResource::collection($posts));
+            return response()->json(PostResource::collection($posts));
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

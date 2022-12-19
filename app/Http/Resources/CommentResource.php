@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentRessource extends JsonResource
+class CommentResource extends JsonResource
 {
 
     public function toArray($request)
@@ -12,6 +12,7 @@ class CommentRessource extends JsonResource
         return [
             'content' => $this->content,
             'author' => new AuthorResource($this->author),
+            'post'=>$this->post_id,
             'created_at' => $this->created_at
         ];
     }

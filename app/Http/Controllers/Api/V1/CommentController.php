@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCommentRequest;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -13,14 +15,22 @@ use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Post $post)
     {
+        try {
+//            $comments = Comment::where(['post_id'=>$post->id])->get();
+            dd(PostResource::collection($post));
+            $comments =   CommentResource::collection($post->comments());
 
+            return response()->json($comments,Response::HTTP_OK);
+
+        }catch (\Exception $exception){
+            return response()->json(
+                [
+                    "error"=>$exception->getMessage()
+                ]
+            );
+        }
     }
 
 

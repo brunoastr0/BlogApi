@@ -67,4 +67,23 @@ class CommentTest extends TestCase
 
     }
 
+    public function test_post_comments_route_index():void{
+        Sanctum::actingAs($this->user);
+        $post = Post::factory()->create();
+       Comment::factory()->create([
+           'content'=>'ola b',
+            'post_id'=>$post->id
+        ]);
+       Comment::factory()->create([
+           'content'=>'ola',
+            'post_id'=>$post->id
+        ]);
+
+
+        $response = $this->getJson(route('post.comment.index', $post->id))
+            ->json();
+
+
+    }
+
 }
