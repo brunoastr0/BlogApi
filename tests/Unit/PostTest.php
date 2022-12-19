@@ -10,17 +10,12 @@ use Tests\TestCase;
 class PostTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
+    public function test_post_has_slug()
+    {
+        $post = Post::factory()->create(['title' => 'The Empire Strikes Back']);
 
-
-    // public function test_post_has_author()
-    // {
-    //     $post = Post::factory()->create();
-    //     $user = User::factory()->create();
+        $this->assertEquals('the-empire-strikes-back',$post->slug );
+    }
 
 
 

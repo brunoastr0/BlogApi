@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuthor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    use HasFactory;
+    use HasFactory, HasAuthor;
 
     protected $table = "comments";
     protected $fillable = [
@@ -29,6 +30,6 @@ class Comment extends Model
 
     public function post()
     {
-        return $this->belongsTo(Post::class, 'post_id');
+        return $this->belongsTo(Post::class);
     }
 }

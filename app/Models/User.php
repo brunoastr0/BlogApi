@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'api_token',
@@ -54,5 +55,10 @@ class User extends Authenticatable
     public function post()
     {
         return $this->hasMany(Post::class, 'author_id');
+    }
+
+    public function role()
+    {
+        return $this->hasOne(Role::class, 'role_id');
     }
 }

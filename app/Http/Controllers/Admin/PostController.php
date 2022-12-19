@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
@@ -22,9 +23,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts =  Post::with("users")->orderBy("creadted_at")->get();
+        $posts =  Post::with("author")->orderBy("created_at")->get();
         return response(
-            ["post" => PostResource::collection($posts)]
+            [
+                "post" => PostResource::collection($posts)
+            ]
         );
     }
 }

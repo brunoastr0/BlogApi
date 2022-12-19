@@ -9,7 +9,10 @@ trait HasAuthor
     public static function bootHasAuthor()
     {
         static::creating(function ($model) {
-            $model->author_id = auth()->id();
+            if($model->author_id == null){
+                $model->author_id = auth()->id();
+
+            }
         });
     }
 }

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('author_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('post_id')->nullable()->constrained('posts')->onDelete('set null');
             $table->string("content");
-            $table->datetime("posted_at");
             $table->timestamps();
         });
     }
