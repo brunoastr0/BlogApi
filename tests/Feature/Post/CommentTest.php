@@ -22,7 +22,7 @@ class CommentTest extends TestCase
         Sanctum::actingAs($this->user);
         $post = Post::factory()->create();
 
-        $comment = Comment::factory()->make(['post_id'=>$post->id]);
+        $comment = Comment::factory()->make();
 
         $this->postJson(route('post.comment.store',$post->id),$comment->toArray())
             ->assertCreated();
@@ -78,12 +78,25 @@ class CommentTest extends TestCase
            'content'=>'ola',
             'post_id'=>$post->id
         ]);
-
-
         $response = $this->getJson(route('post.comment.index', $post->id))
             ->json();
+        $this->assertCount(2,$response[0]);
+    }
 
-
+    public function test_comment_author_can_update_comment():void{
+        Sanctum::actingAs($this->user);
+        $post = Post::factory()->create();
+        $comment = Comment::factory()->create([
+            "post_id"=>$post->id,
+            "author_id"=>$this->user->id
+        ]);
+        $this->putJson(route('post.comment.update',[$post->id,$comment->id]), ['content'=>"comment updated"])
+            ->assertOk();
+        $this->assertDatabaseHas("comments",[
+            "post_id"=>$post->id,
+            "id"=>$comment->id,
+            "content"=>"comment updated"
+            ]);
     }
 
 }

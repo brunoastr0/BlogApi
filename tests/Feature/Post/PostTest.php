@@ -83,10 +83,9 @@ class PostTest extends TestCase
         Post::factory()->create();
         Post::factory()->create();
 
-       $response =  $this->getJson(route('post.index'));
-       dd($response);
-//            ->assertOk()
-//            ->assertJsonCount(2);
+       $response =  $this->getJson(route('post.index'))
+            ->assertOk()
+            ->assertJsonCount(2);
 
     }
 }

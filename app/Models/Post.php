@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Interfaces\Likeable;
 use App\Traits\HasAuthor;
+use App\Traits\HasLikes;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +13,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 
-class Post extends Model
+class Post extends Model implements Likeable
 {
-    use HasFactory, HasAuthor;
+    use HasFactory, HasAuthor, HasLikes;
 
 
     protected $table = 'posts';

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasAuthor;
+use App\Traits\HasLikes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
-    use HasFactory, HasAuthor;
+    use HasFactory, HasAuthor,HasLikes;
 
     protected $table = "comments";
     protected $fillable = [

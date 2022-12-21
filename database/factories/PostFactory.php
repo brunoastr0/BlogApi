@@ -16,7 +16,7 @@ class PostFactory extends Factory
         return [
             'title' => fake()->text(),
             'content' => fake()->text(),
-            'author_id' => function(){return User::factory()->create()->id;}
+            'author_id' => User::factory()->create()->id
         ];
     }
 }
