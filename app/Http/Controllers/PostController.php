@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PostCollection;
+use App\Http\Requests\CreatePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Http\Controllers\Controller;
+
+
+use \Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -17,137 +23,111 @@ class PostController extends Controller
      */
     public function index()
     {
-        try {
-            $posts = Post::all();
-            if ($posts) {
-                return PostCollection::collection($posts);
-            }
-            return response(status: 404);
-        } catch (\Throwable $th) {
-            return response()->json([
-                "error" => $th->getMessage()
-            ]);
-        }
+        $posts =  Post::with("author")->orderBy("created_at")->latest()->limit(10)->get();
+
+        return view('index', [
+            'posts' => $posts
+        ]);
     }
 
 
 
-    public function store(Request $request)
-    {
+    // public function store(CreatePostRequest $request)
+    // {
 
-        try {
-            $validation = Validator::make($request->all(), [
-                'title' => ['required', 'string'],
-                'post' => ['required', 'string', 'min:100'],
-                'slug' => ['required', 'string'],
-                'author_id' => ['required', 'int']
-            ]);
+    //     try {
 
-            if ($validation->fails()) {
-                return response()->json([
-                    'error' => $validation->errors()->all()
-                ]);
-            } else {
-                $post = new Post();
-
-                $result = Post::create([
-                    $post->title = $request->title,
-                    $post->post = $request->post,
-                    $post->slug = $request->slug,
-                    $post->author_id = $request->author_id,
-                ]);
-                \Log::error(json_encode($result));
+    //         // dd($request->all());
+    //         $result = Post::create($request->validated());
 
 
-
-                if ($result) {
-                    return response(status: 201);
-                }
-            }
-
-            return;
-        } catch (\Throwable $th) {
-            return response()->json([
-                'error' => $th->getMessage()
-            ]);
-        }
-    }
+    //         return response([
+    //             'message' => "Post created succesfully",
+    //             "post" => new PostResource($result)
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
 
 
-    public function show(int $id)
-    {
+    // public function show(string $slug)
+    // {
 
-        try {
-            $post = Post::findOrFail($id);
-            if ($post) {
-                return $post;
-                return PostCollection::collection($post);
-            }
-        } catch (\Throwable $th) {
+    //     try {
 
-            // \Log::error(json_encode($th));
-            return response()->json([
-                'error' => $th->getMessage()
-            ]);
-        }
-    }
-
-    public function edit(Post $Post)
-    {
-        //
-    }
-
-    public function update(Request $request, int $id)
-    {
-        try {
-            $post = Post::findOrFail($id);
-            $validation = Validator::make($request->all(), [
-                'title' => ['required', 'string', 'max:20', 'min:10'],
-                'post' => ['required', 'string', 'min:100'],
-                'slug' => ['required', 'string'],
-                'author_id' => ['required', 'int']
-            ]);
-
-            if ($validation->fails()) {
-                return response()->json([
-                    'error' => $validation->errors()->all()
-                ]);
-            } else {
-                $post->post = $request->post;
-                $post->slug = $request->slug;
-                $post->author_id = $request->author_id;
-                $result  = $post->save();
-                if ($result) {
-                    return response()->json([
-                        "status" => 200,
-                        "message" => "post updated succesfully"
-                    ]);
-                }
-            }
-
-            return;
-        } catch (\Throwable $th) {
-            return response()->json([
-                'error' => $th->getMessage()
-            ]);
-        }
-    }
+    //         $post = Post::where("slug", $slug)->get();
 
 
-    public function destroy(int $id)
-    {
-        try {
-            $post = Post::findOrFail($id);
-            if ($post) {
-                return response()->json([
-                    "Message" => "Post was deleted",
-                    "post" => $post
-                ]);
-            }
-        } catch (\Throwable $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ]);
-        }
-    }
+
+
+    //         return response(PostResource::collection($post));
+    //     } catch (\Exception $e) {
+
+    //         // \Log::error(json_encode($e));
+    //         return response()->json([
+    //             'error' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
+    // public function update(Request $request, int $id)
+    // {
+    //     try {
+    //         $post = Post::findOrFail($id);
+    //         $response = Gate::inspect('author-post-actions', $post);
+    //         if ($response->allowed()) {
+    //             $post->update($request->all());
+
+
+    //             return response()->json([
+    //                 "status" => 200,
+    //                 "message" => "Post updated succesfully"
+    //             ]);
+    //         } else {
+    //             return response(["message" => $response->message()], 403);
+    //         }
+
+
+
+    //         return;
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
+    // public function destroy(int $id)
+    // {
+    //     try {
+    //         $post = Post::findOrFail($id);
+    //         $response = Gate::inspect('author-post-actions', $post);
+    //         if ($response->allowed()) {
+    //             $result = $post->delete();
+
+    //             return response()->json([
+    //                 "status" => 200,
+    //                 "message" => "Post deleted succesfully",
+    //                 "post" => $post
+    //             ]);
+    //         } else {
+    //             return response(["message" => $response->message()], 403);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             "error" => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
+    // public function LastWeekPosts()
+    // {
+    //     return Post::lastWeek()->get();
+    // }
 }
