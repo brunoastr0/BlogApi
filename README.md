@@ -1,5 +1,6 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-aravel Blog API
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a>
+Blog API</p>
+
 
 This project is a Laravel-based API for managing a simple blog system. It utilizes Laravel framework, MariaDB for the database, Docker for containerization, and follows a Test-Driven Development (TDD) approach to ensure code quality and reliability.
 Features
@@ -17,78 +18,77 @@ Requirements
 
 Installation
 
-    Clone the repository:
+Clone the repository:
 
-    bash
 
-git clone https://github.com/yourusername/laravel-blog-api.git
+    git clone https://github.com/yourusername/laravel-blog-api.git
 
 Navigate to the project directory:
 
-bash
 
-cd laravel-blog-api
 
-Copy the environment file:
+    cd laravel-blog-api
 
-bash
+    Copy the environment file:
 
-cp .env.example .env
+
+
+    cp .env.example .env
 
 Modify the .env file with your database settings:
 
 env
 
-DB_CONNECTION=mysql
-DB_HOST=0.0.0.0
-DB_PORT=3306
-DB_DATABASE=BlogApi
-DB_USERNAME=root
-DB_PASSWORD=****
+    DB_CONNECTION=mysql
+    DB_HOST=0.0.0.0
+    DB_PORT=3306
+    DB_DATABASE=BlogApi
+    DB_USERNAME=root
+    DB_PASSWORD=****
 
 Build the Docker containers:
 
-bash
 
-docker-compose up -d --build
+
+    docker-compose up -d --build
 
 Install composer dependencies:
 
-bash
 
-docker-compose exec app composer install
+
+    docker-compose exec app composer install
 
 Generate application key:
 
-bash
 
-docker-compose exec app php artisan key:generate
+
+    docker-compose exec app php artisan key:generate
 
 Run migrations and seeders:
 
-bash
+
 
     docker-compose exec app php artisan migrate --seed
 
 Usage
 
-    Start the Docker containers if not already running:
+Start the Docker containers if not already running:
 
-    bash
+    
 
     docker-compose up -d
 
-    Access the API via http://localhost:8000.
+Access the API via http://localhost:8000.
 
-    Use an API client like Postman or cURL to interact with the endpoints.
+Use an API client like Postman or cURL to interact with the endpoints.
 
 Testing
 
 To run the tests, execute:
 
-bash
 
-docker-compose exec app php artisan test
+
+    docker-compose exec app php artisan test
 
 This will run both unit and feature tests.
 API Endpoints
